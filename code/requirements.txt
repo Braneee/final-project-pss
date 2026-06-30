@@ -1,0 +1,38 @@
+# Framework utama
+Django>=5.1,<5.2
+
+# Database
+psycopg2-binary>=2.9,<3.0
+
+# Django Ninja - REST API framework dengan Pydantic & Swagger
+django-ninja==1.3.0
+pydantic[email]
+
+# JWT Authentication
+PyJWT==2.8.0
+
+# Password hashing
+passlib==1.7.4
+
+# Image support
+Pillow>=10.0,<11.0
+
+# Django Silk - query profiling
+django-silk==5.1.0
+
+# Redis caching
+redis>=5.0,<6.0
+django-redis>=5.4,<6.0
+
+# MongoDB
+pymongo>=4.6,<5.0
+
+# Celery + RabbitMQ
+celery>=5.3,<6.0
+kombu>=5.3,<6.0
+
+# Celery monitoring (Flower)
+flower>=2.0,<3.0
+
+# Rate limiting
+django-ratelimit>=4.1,<5.0

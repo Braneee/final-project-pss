@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple LMS - AdminLTE Dashboard Demo</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Theme style (AdminLTE Bootstrap 4 CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <style>
+        .main-sidebar {
+            background-color: #343a40;
+        }
+        .brand-link {
+            border-bottom: 1px solid #4b545c;
+        }
+        .user-panel {
+            border-bottom: 1px solid #4b545c;
+        }
+        .nav-sidebar .nav-link.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .log-terminal {
+            background: #212529;
+            color: #28a745;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 220px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 0.85rem;
+            border: 1px solid #343a40;
+        }
+        .quiz-choice-item {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .quiz-choice-item:hover {
+            background: #e9ecef;
+            border-color: #ced4da;
+        }
+        .quiz-choice-item input[type="radio"] {
+            margin-right: 10px;
+        }
+        .console-output {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="#" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="/api/docs" class="nav-link" target="_blank">Swagger API</a>
+            </li>
+        </ul>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <span class="nav-link">
+                    Status: <span id="navLoginBadge" class="badge badge-danger">Belum Login</span>
+                </span>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="#" class="brand-link">
+            <i class="fas fa-graduation-cap brand-image img-circle elevation-3 text-primary" style="opacity: .8; font-size: 1.5rem; margin-left: 10px; margin-top: 5px;"></i>
+            <span class="brand-text font-weight-light">Simple LMS LTE</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar d-flex flex-column" style="height: calc(100vh - 65px);">
+            <!-- Sidebar user panel -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image text-white" style="font-size: 1.5rem; padding-left: 15px;">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="info">
+                    <a href="#" class="d-block" id="sidebarUserLabel">Nama User</a>
+                </div>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2 flex-grow-1">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard Demo</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/api/docs" class="nav-link" target="_blank">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>Swagger API Docs</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/silk/" class="nav-link" target="_blank">
+                            <i class="nav-icon fas fa-chart-line"></i>
+                            <p>Silk Profiler</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/" class="nav-link" target="_blank">
+                            <i class="nav-icon fas fa-user-cog"></i>
+                            <p>Django Admin</p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Pinned Sign Out Button (Kiri Bawah Sidebar) -->
+            <div class="mt-auto mb-3 px-2">
+                <a href="#" class="btn btn-danger btn-block" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </a>
+            </div>
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0" id="dashboardHeaderTitle">LMS Interactive Dashboard</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" id="breadcrumbRole">Dashboard</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                
+                <!-- ==================== 1. STUDENT VIEW ==================== -->
+                <div id="studentWidgets" style="display: none;">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-book-open"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Kelas Terpilih</span>
+                                    <span class="info-box-number" id="widgetCourseName">Pemrograman Web</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-tasks"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Progres Materi</span>
+                                    <span class="info-box-number" id="widgetProgressLabel">0 / 3 Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-warning elevation-1 text-white"><i class="fas fa-poll-h"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Skor Kuis Kelulusan</span>
+                                    <span class="info-box-number" id="widgetQuizScore">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-award"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Sertifikat Digital</span>
+                                    <span class="info-box-number" id="widgetCertStatus">Belum Terbit</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="studentView" style="display: none;">
+                    <div class="row">
+                        <!-- LEFT COLUMN -->
+                        <div class="col-md-6">
+                            <!-- CARD 1: ENROLLMENT -->
+                            <div class="card card-success shadow">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-user-plus"></i> 1. Pendaftaran Kelas (Enrollment)</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p>Daftarkan siswa pada kelas <strong>Pemrograman Web (Course ID: 1)</strong>.</p>
+                                    <div class="callout callout-success">
+                                        <h5>Info Kelas:</h5>
+                                        <p>Instructor: <strong>dosen10</strong> | Harga: Rp 250.000 (Siswa demo otomatis terdaftar sebagai anggota).</p>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button id="btnEnroll" class="btn btn-success btn-block" onclick="enroll()" disabled>Daftar & Hubungkan ke Redis Cache</button>
+                                </div>
+                            </div>
+
+                            <!-- CARD 2: PROGRESS -->
+                            <div class="card card-info shadow">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-book-reader"></i> 2. Progres Belajar (Materi / Lessons)</h3>
+                                </div>
+                                <div class="card-body" id="lessonsList" style="pointer-events: none; opacity: 0.5;">
+                                    <p>Selesaikan semua materi pelajaran di bawah ini untuk membuka akses kuis kelulusan:</p>
+                                    
+                                    <div class="custom-control custom-checkbox mb-3 p-3 bg-light border rounded">
+                                        <input class="custom-control-input" type="checkbox" id="lesson100" onchange="updateProgress(100, this.checked)">
+                                        <label for="lesson100" class="custom-control-label d-flex justify-content-between">
+                                            <span>Materi 1: Struktur Kontrol (ID: 100)</span>
+                                            <span id="badge100" class="badge badge-secondary">Belum Selesai</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="custom-control custom-checkbox mb-3 p-3 bg-light border rounded">
+                                        <input class="custom-control-input" type="checkbox" id="lesson200" onchange="updateProgress(200, this.checked)">
+                                        <label for="lesson200" class="custom-control-label d-flex justify-content-between">
+                                            <span>Materi 2: OOP Python (ID: 200)</span>
+                                            <span id="badge200" class="badge badge-secondary">Belum Selesai</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="custom-control custom-checkbox mb-3 p-3 bg-light border rounded">
+                                        <input class="custom-control-input" type="checkbox" id="lesson300" onchange="updateProgress(300, this.checked)">
+                                        <label for="lesson300" class="custom-control-label d-flex justify-content-between">
+                                            <span>Materi 3: Fungsi & Modul (ID: 300)</span>
+                                            <span id="badge300" class="badge badge-secondary">Belum Selesai</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT COLUMN -->
+                        <div class="col-md-6">
+                            <!-- CARD 3: QUIZ -->
+                            <div class="card card-warning shadow">
+                                <div class="card-header text-white">
+                                    <h3 class="card-title"><i class="fas fa-question-circle"></i> 3. Ujian Kuis Kelulusan (Quiz ID: 3)</h3>
+                                </div>
+                                <div class="card-body" id="quizSection" style="pointer-events: none; opacity: 0.5;">
+                                    <h5>Pertanyaan:</h5>
+                                    <p class="font-weight-bold">Manakah yang merupakan tag untuk membuat hyperlink di HTML?</p>
+                                    
+                                    <div class="quiz-choice-item" onclick="selectChoice(4)">
+                                        <input type="radio" name="choice" id="choice4" value="4">
+                                        <label for="choice4" class="mb-0">A. tag &lt;a&gt; (Benar)</label>
+                                    </div>
+                                    <div class="quiz-choice-item" onclick="selectChoice(5)">
+                                        <input type="radio" name="choice" id="choice5" value="5">
+                                        <label for="choice5" class="mb-0">B. tag &lt;img&gt;</label>
+                                    </div>
+                                    <div class="quiz-choice-item" onclick="selectChoice(6)">
+                                        <input type="radio" name="choice" id="choice6" value="6">
+                                        <label for="choice6" class="mb-0">C. tag &lt;link&gt;</label>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button id="btnSubmitQuiz" class="btn btn-warning text-white btn-block" onclick="submitQuiz()" disabled>Kirim Jawaban Kuis</button>
+                                </div>
+                            </div>
+
+                            <!-- CARD 4: CERTIFICATE -->
+                            <div class="card card-danger card-outline shadow" id="certCard" style="display: none;">
+                                <div class="card-header">
+                                    <h3 class="card-title text-danger"><i class="fas fa-graduation-cap"></i> 4. Kelulusan & Sertifikat Digital</h3>
+                                </div>
+                                <div class="card-body text-center">
+                                    <i class="fas fa-ribbon text-success" style="font-size: 4rem;"></i>
+                                    <h4 class="mt-3">Selamat! Anda Dinyatakan Lulus</h4>
+                                    <p class="text-muted">Sertifikat kelulusan Anda berhasil diterbitkan secara asinkron oleh Celery:</p>
+                                    <div class="alert alert-dark font-weight-bold" id="certCodeDisplay">
+                                        -
+                                    </div>
+                                    <div class="d-flex justify-content-center" style="gap: 10px;">
+                                        <button class="btn btn-success" onclick="downloadCert()"><i class="fas fa-download"></i> Unduh PDF</button>
+                                        <button class="btn btn-info" onclick="verifyCert()"><i class="fas fa-check-circle"></i> Verifikasi Publik</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== 2. INSTRUCTOR VIEW ==================== -->
+                <div id="instructorWidgets" style="display: none;">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-chalkboard-teacher"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Peran Aktif</span>
+                                    <span class="info-box-number" id="widgetInstRole">Instructor / Dosen</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-book"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Status Kelas</span>
+                                    <span class="info-box-number">4 Kelas Pengampu</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="instructorView" style="display: none;">
+                    <div class="row">
+                        <!-- Create Quiz -->
+                        <div class="col-md-6">
+                            <div class="card card-success shadow">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-plus-circle"></i> 1. Buat Kuis Baru (POST /api/quizzes)</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Course ID</label>
+                                        <input type="number" id="quizCourseId" class="form-control" value="1">
+                                        <small class="text-muted">dosen10 memiliki hak akses membuat kuis di Course ID 1, 15, 90, 100.</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Judul Kuis</label>
+                                        <input type="text" id="quizTitle" class="form-control" placeholder="Kuis Baru Pemrograman Web">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Deskripsi Kuis</label>
+                                        <input type="text" id="quizDesc" class="form-control" placeholder="Materi evaluasi kelulusan.">
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Passing Grade (%)</label>
+                                            <input type="number" id="quizPass" class="form-control" value="70">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label>Batas Percobaan</label>
+                                            <input type="number" id="quizLimit" class="form-control" value="3">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-success btn-block" onclick="createQuiz()">Buat Kuis Baru</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Question -->
+                        <div class="col-md-6">
+                            <div class="card card-info shadow">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-question"></i> 2. Tambah Soal Kuis (POST /api/quizzes/{id}/questions)</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Quiz ID</label>
+                                        <input type="number" id="questQuizId" class="form-control" placeholder="Masukkan Quiz ID baru (misal: 3)">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Teks Pertanyaan</label>
+                                        <input type="text" id="questText" class="form-control" placeholder="Manakah yang merupakan elemen tag link di HTML?">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Opsi Jawaban A (Benar)</label>
+                                        <input type="text" id="choiceTextA" class="form-control" placeholder="tag <a>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Opsi Jawaban B (Salah)</label>
+                                        <input type="text" id="choiceTextB" class="form-control" placeholder="tag <link>">
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-info btn-block" onclick="addQuestion()">Tambah Soal Baru</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== 3. ADMIN VIEW ==================== -->
+                <div id="adminWidgets" style="display: none;">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-user-shield"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Peran Aktif</span>
+                                    <span class="info-box-number">System Admin (Superuser)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning elevation-1 text-white"><i class="fas fa-database"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">NoSQL Analytics</span>
+                                    <span class="info-box-number">MongoDB Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="adminView" style="display: none;">
+                    <div class="row">
+                        <!-- MongoDB Audit Logs -->
+                        <div class="col-md-6">
+                            <div class="card card-primary shadow">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-history"></i> 1. MongoDB Audit Logs (GET /api/logs/activities)</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p>Menarik data audit log aktivitas user secara langsung dari MongoDB:</p>
+                                    <div class="console-output" id="mongoLogsContainer">Menunggu instruksi...</div>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-primary btn-block" onclick="fetchMongoLogs()">Fetch Activity Logs</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MongoDB Aggregation Report -->
+                        <div class="col-md-6">
+                            <div class="card card-success shadow">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-chart-pie"></i> 2. Agregasi Popularitas Kelas (MongoDB Aggregation)</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p>Menjalankan query MongoDB Aggregation Pipeline untuk menghitung statistik kelas:</p>
+                                    <div class="console-output" id="mongoPopularContainer">Menunggu instruksi...</div>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-success btn-block" onclick="fetchPopularityStats()">Fetch Popularity Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== 4. CONSOLE LOGGER FOR ALL ROLES ==================== -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card card-dark shadow">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-terminal"></i> Konsol API Logger (Real-time HTTP Request)</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="logBox" class="log-terminal">Menunggu aksi...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <footer class="main-footer">
+        <strong>LMS AdminLTE Dashboard &copy; 2026.</strong>
+        All rights reserved.
+        <div class="float-right d-none d-sm-inline-block">
+            <b>Version</b> 1.0.0 (Extended Backend Bonus)
+        </div>
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+<script>
+    let token = "";
+    let enrollmentId = null;
+    let selectedChoiceId = null;
+    let certificateId = null;
+    let certificateCode = "";
+
+    function log(message, type = "info") {
+        const logBox = document.getElementById("logBox");
+        const time = new Date().toLocaleTimeString();
+        let prefix = `[${time}] `;
+        if (type === "success") prefix += "🟢 SUCCESS: ";
+        else if (type === "error") prefix += "🔴 ERROR: ";
+        else prefix += "🔵 INFO: ";
+        
+        logBox.innerText = prefix + message + "\n" + logBox.innerText;
+    }
+
+    // Inisialisasi Sesi Otomatis & Kontrol Rendering Berdasarkan Role
+    document.addEventListener("DOMContentLoaded", () => {
+        const storedToken = localStorage.getItem("lms_token");
+        const storedUser = localStorage.getItem("lms_user");
+        const storedRole = localStorage.getItem("lms_role");
+
+        if (!storedToken) {
+            window.location.href = "/login/";
+            return;
+        }
+
+        token = storedToken;
+        document.getElementById("navLoginBadge").innerText = `Login: ${storedUser} (${storedRole})`;
+        document.getElementById("navLoginBadge").className = "badge badge-success";
+        document.getElementById("sidebarUserLabel").innerText = `${storedUser} (${storedRole.toUpperCase()})`;
+
+        // Sembunyikan semua section
+        document.getElementById("studentWidgets").style.display = "none";
+        document.getElementById("studentView").style.display = "none";
+        document.getElementById("instructorWidgets").style.display = "none";
+        document.getElementById("instructorView").style.display = "none";
+        document.getElementById("adminWidgets").style.display = "none";
+        document.getElementById("adminView").style.display = "none";
+
+        // Tampilkan section berdasarkan role
+        if (storedRole === "student") {
+            document.getElementById("studentWidgets").style.display = "block";
+            document.getElementById("studentView").style.display = "block";
+            document.getElementById("dashboardHeaderTitle").innerText = "LMS Student Dashboard";
+            document.getElementById("breadcrumbRole").innerText = "Student";
+            document.getElementById("btnEnroll").disabled = false;
+            log(`Halo siswa ${storedUser}, selamat belajar!`, "success");
+        } else if (storedRole === "instructor") {
+            document.getElementById("instructorWidgets").style.display = "block";
+            document.getElementById("instructorView").style.display = "block";
+            document.getElementById("dashboardHeaderTitle").innerText = "LMS Instructor Dashboard";
+            document.getElementById("breadcrumbRole").innerText = "Instructor";
+            log(`Selamat datang instruktur ${storedUser}, silakan kelola kuis Anda.`, "success");
+        } else if (storedRole === "admin") {
+            document.getElementById("adminWidgets").style.display = "block";
+            document.getElementById("adminView").style.display = "block";
+            document.getElementById("dashboardHeaderTitle").innerText = "LMS Admin Console";
+            document.getElementById("breadcrumbRole").innerText = "System Admin";
+            log(`Sesi root admin aktif. Kontrol analitik MongoDB terbuka.`, "success");
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem("lms_token");
+        localStorage.removeItem("lms_user");
+        localStorage.removeItem("lms_role");
+        window.location.href = "/login/";
+    }
+
+    // ==================== 1. STUDENT FUNCTIONS ====================
+    async function enroll() {
+        log("Mendaftarkan siswa pada mata kuliah ID: 1...");
+        try {
+            const res = await fetch("/api/enrollments", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ course_id: 1 })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                enrollmentId = data.id;
+                document.getElementById("btnEnroll").disabled = true;
+                document.getElementById("lessonsList").style.pointerEvents = "auto";
+                document.getElementById("lessonsList").style.opacity = "1";
+                log(`Pendaftaran berhasil! Enrollment ID: ${enrollmentId}. Celery worker mengirim email konfirmasi di background.`, "success");
+            } else {
+                if (data.message && data.message.includes("sudah terdaftar")) {
+                    log("User sudah terdaftar di kelas ini. Mengaktifkan progres materi...");
+                    const myRes = await fetch("/api/enrollments/my-courses", {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    const myCourses = await myRes.json();
+                    const current = myCourses.find(c => c.course.id === 1);
+                    if (current) {
+                        enrollmentId = current.id;
+                        document.getElementById("btnEnroll").disabled = true;
+                        document.getElementById("lessonsList").style.pointerEvents = "auto";
+                        document.getElementById("lessonsList").style.opacity = "1";
+                        log(`Menggunakan Enrollment ID aktif: ${enrollmentId}`, "success");
+                    }
+                } else {
+                    log(data.message, "error");
+                }
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    async function updateProgress(contentId, isComplete) {
+        log(`Update progres materi ID: ${contentId} ➔ ${isComplete ? "SELESAI" : "BELUM"}`);
+        try {
+            const res = await fetch(`/api/enrollments/${enrollmentId}/progress`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ content_id: contentId, is_complete: isComplete })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                const badge = document.getElementById(`badge${contentId}`);
+                badge.innerText = isComplete ? "Selesai" : "Belum Selesai";
+                badge.className = isComplete ? "badge badge-success" : "badge badge-secondary";
+                log(`Progres materi ${contentId} diperbarui di database.`, "success");
+                
+                checkAllProgressComplete();
+            } else {
+                log(data.message, "error");
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    function checkAllProgressComplete() {
+        const p100 = document.getElementById("lesson100").checked;
+        const p200 = document.getElementById("lesson200").checked;
+        const p300 = document.getElementById("lesson300").checked;
+
+        let completedCount = 0;
+        if (p100) completedCount++;
+        if (p200) completedCount++;
+        if (p300) completedCount++;
+
+        document.getElementById("widgetProgressLabel").innerText = `${completedCount} / 3 Selesai`;
+
+        if (completedCount === 3) {
+            document.getElementById("quizSection").style.pointerEvents = "auto";
+            document.getElementById("quizSection").style.opacity = "1";
+            document.getElementById("btnSubmitQuiz").disabled = false;
+            log("Seluruh materi selesai dibaca! Kuis kelulusan diaktifkan.");
+        } else {
+            document.getElementById("quizSection").style.pointerEvents = "none";
+            document.getElementById("quizSection").style.opacity = "0.5";
+            document.getElementById("btnSubmitQuiz").disabled = true;
+        }
+    }
+
+    function selectChoice(choiceId) {
+        selectedChoiceId = choiceId;
+        document.getElementById(`choice${choiceId}`).checked = true;
+        log(`Opsi jawaban kuis dipilih: ${choiceId}`);
+    }
+
+    async function submitQuiz() {
+        if (!selectedChoiceId) {
+            alert("Pilih jawaban Anda terlebih dahulu!");
+            return;
+        }
+        log("Mengirimkan lembar kuis ke scoring engine...");
+
+        try {
+            const res = await fetch("/api/quizzes/3/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    answers: [{ question_id: 2, choice_id: selectedChoiceId }]
+                })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById("widgetQuizScore").innerText = `${data.score}%`;
+                log(`Ujian Selesai! Skor: ${data.score}%. Kelulusan: ${data.is_passed ? "LULUS" : "TIDAK LULUS"}.`, "success");
+                if (data.is_passed) {
+                    document.getElementById("widgetCertStatus").innerText = "Sedang Diterbitkan";
+                    log("Memulai background task Celery untuk menerbitkan PDF sertifikat...");
+                    setTimeout(fetchCertificates, 1500);
+                } else {
+                    log(`Anda belum mencapai passing grade: ${data.message}`, "error");
+                }
+            } else {
+                log(data.message, "error");
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    async function fetchCertificates() {
+        try {
+            const res = await fetch("/api/enrollments/my-certificates", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const cert = data.find(c => c.course_title.includes("Pemrograman Web"));
+            if (cert) {
+                certificateId = cert.id;
+                certificateCode = cert.certificate_code;
+                document.getElementById("certCodeDisplay").innerText = certificateCode;
+                document.getElementById("certCard").style.display = "block";
+                document.getElementById("widgetCertStatus").innerText = "Diterbitkan";
+                log(`Sertifikat digital terbit! Kode: ${certificateCode}.`, "success");
+            } else {
+                log("Sertifikat sedang diantrekan di background Celery...");
+                setTimeout(fetchCertificates, 1500);
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    function downloadCert() {
+        if (!certificateId) return;
+        log(`Membuka berkas PDF sertifikat ID: ${certificateId}...`);
+        window.open(`/api/enrollments/certificates/${certificateId}/download?token=${token}`, "_blank");
+    }
+
+    async function verifyCert() {
+        if (!certificateCode) return;
+        log(`Mengirim request verifikasi sertifikat publik untuk kode: ${certificateCode}...`);
+        try {
+            const res = await fetch(`/api/enrollments/certificates/verify/${certificateCode}`);
+            const data = await res.json();
+            if (res.ok) {
+                alert(`[VERIFIKASI SERTIFIKAT PUBLIK]\n\nKode: ${data.certificate_code}\nSiswa: ${data.student_name}\nKelas: ${data.course_title}\nStatus: VALID`);
+                log(`Verifikasi sukses! Sertifikat valid untuk siswa ${data.student_name}`, "success");
+            } else {
+                log(data.message, "error");
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    // ==================== 2. INSTRUCTOR FUNCTIONS ====================
+    async function createQuiz() {
+        const courseId = document.getElementById("quizCourseId").value;
+        const title = document.getElementById("quizTitle").value;
+        const desc = document.getElementById("quizDesc").value;
+        const pass = document.getElementById("quizPass").value;
+        const limit = document.getElementById("quizLimit").value;
+
+        log(`Mengirimkan perintah POST /api/quizzes untuk kelas ${courseId}...`);
+        try {
+            const res = await fetch("/api/quizzes", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    course_id: parseInt(courseId),
+                    title: title,
+                    description: desc,
+                    passing_grade: parseInt(pass),
+                    attempt_limit: parseInt(limit)
+                })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                log(`Kuis baru berhasil dibuat! ID Kuis: ${data.id}. Catat ID ini untuk menambahkan pertanyaan.`, "success");
+                document.getElementById("questQuizId").value = data.id;
+            } else {
+                log(data.message || "Akses Ditolak/Error", "error");
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    async function addQuestion() {
+        const quizId = document.getElementById("questQuizId").value;
+        const text = document.getElementById("questText").value;
+        const optA = document.getElementById("choiceTextA").value;
+        const optB = document.getElementById("choiceTextB").value;
+
+        log(`Mengirimkan perintah POST /api/quizzes/${quizId}/questions...`);
+        try {
+            const res = await fetch(`/api/quizzes/${quizId}/questions`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    text: text,
+                    weight: 100,
+                    choices: [
+                        { text: optA, is_correct: true },
+                        { text: optB, is_correct: false }
+                    ]
+                })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                log(`Pertanyaan kuis baru berhasil ditambahkan pada Kuis ID ${quizId}!`, "success");
+            } else {
+                log(data.message || "Gagal menambahkan pertanyaan", "error");
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    // ==================== 3. ADMIN FUNCTIONS ====================
+    async function fetchMongoLogs() {
+        log("Mencoba mengambil log aktivitas terbaru dari MongoDB (GET /api/logs/activities)...");
+        try {
+            const res = await fetch("/api/logs/activities", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById("mongoLogsContainer").innerText = JSON.stringify(data.slice(0, 10), null, 2);
+                log("Log aktivitas dari MongoDB berhasil diambil!", "success");
+            } else {
+                log(data.message || "Gagal mengambil log", "error");
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+
+    async function fetchPopularityStats() {
+        log("Mengambil laporan popularitas kelas agregasi MongoDB (GET /api/logs/course-stats)...");
+        try {
+            const res = await fetch("/api/logs/course-stats", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById("mongoPopularContainer").innerText = JSON.stringify(data, null, 2);
+                log("Laporan agregasi MongoDB berhasil dihitung secara real-time!", "success");
+            } else {
+                log(data.message || "Gagal mengambil laporan", "error");
+            }
+        } catch (err) {
+            log(err.message, "error");
+        }
+    }
+</script>
+</body>
+</html>
