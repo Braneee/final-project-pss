@@ -22,7 +22,7 @@ import random
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from courses.models import Course, CourseContent, CourseMember
+from courses.models import Course, CourseContent, CourseMember, Quiz, Question, Choice
 from accounts.models import UserProfile
 
 
@@ -161,6 +161,53 @@ class Command(BaseCommand):
         contents = self._seed_contents(courses)
 
         self._print_summary()
+
+        # Seed default Quiz, Question, and Choices for Demo (ID 3, Question ID 2, Choices 4, 5, 6)
+        course1 = Course.objects.filter(id=1).first()
+        if course1:
+            quiz, _ = Quiz.objects.get_or_create(
+                id=3,
+                defaults={
+                    'course': course1,
+                    'title': 'Kuis Baru: Tag Dasar HTML',
+                    'description': 'Kuis mengenai tag dasar HTML.',
+                    'passing_grade': 70,
+                    'attempt_limit': 3,
+                }
+            )
+            question, _ = Question.objects.get_or_create(
+                id=2,
+                defaults={
+                    'quiz': quiz,
+                    'text': 'Manakah yang merupakan tag untuk membuat hyperlink di HTML?',
+                    'weight': 100,
+                }
+            )
+            Choice.objects.get_or_create(
+                id=4,
+                defaults={
+                    'question': question,
+                    'text': 'A. tag <a> (Benar)',
+                    'is_correct': True,
+                }
+            )
+            Choice.objects.get_or_create(
+                id=5,
+                defaults={
+                    'question': question,
+                    'text': 'B. tag <img>',
+                    'is_correct': False,
+                }
+            )
+            Choice.objects.get_or_create(
+                id=6,
+                defaults={
+                    'question': question,
+                    'text': 'C. tag <link>',
+                    'is_correct': False,
+                }
+            )
+            self.stdout.write(self.style.SUCCESS('  → Kuis, pertanyaan, dan opsi demo telah siap (Quiz ID: 3)'))
 
         self.stdout.write('')
         self.stdout.write(self.style.SUCCESS('Seeding selesai! Sekarang coba:'))

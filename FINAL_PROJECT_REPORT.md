@@ -54,10 +54,10 @@ Berikut adalah tabel fitur tambahan pilihan yang telah diimplementasikan penuh d
 
 Berikut adalah klaim poin bonus opsional yang berhasil diimplementasikan pada project ini:
 
-1.  **UI/Frontend Sederhana untuk Demo (+5 Poin)**:
+1.  **UI/Frontend Sederhana untuk Demo**:
     *   Telah disediakan Single Page Application (SPA) dashboard interaktif yang di-serve langsung dari alamat root Django: `http://localhost:8000/`.
     *   Dosen/Penguji dapat langsung menguji alur Login JWT -> Enroll Kelas -> Centang 3 Materi -> Kerjakan Kuis -> Unduh & Verifikasi PDF Sertifikat secara visual tanpa menyentuh Swagger/Postman.
-2.  **Dokumentasi Sangat Rapi dengan Diagram Arsitektur (+3 Poin)**:
+2.  **Dokumentasi Sangat Rapi dengan Diagram Arsitektur**:
     *   Struktur arsitektur backend LMS digambarkan secara jelas menggunakan diagram berikut:
 
 ```mermaid
@@ -77,9 +77,10 @@ graph TD
 
 ### 🛠️ Penjelasan Implementasi Fitur Tambahan Utama
 
-1.  **Quiz, Scoring, & Kriteria Kelulusan**:
-    *   Siswa dapat mengerjakan kuis yang memiliki bobot per pertanyaan. Hasil pengerjaan dinilai secara otomatis skala 0-100.
-    *   Jika siswa **lulus** (skor >= `passing_grade`) dan **seluruh materi di kelas tersebut selesai**, sistem akan memicu penerbitan sertifikat secara otomatis.
+1.  **Quiz, Question Bank, & Kriteria Kelulusan**:
+    *   Sistem dilengkapi dengan **Question Bank** di mana siswa dapat mengerjakan kuis dengan sistem penilaian terbobot (skala 0-100).
+    *   Sistem juga memberlakukan **Attempt Limit** (batasan percobaan maksimal) per kuis dan mencatat seluruh **Riwayat Percobaan** (Attempt History) siswa di database.
+    *   Jika siswa **lulus** (skor >= `passing_grade`) dan seluruh materi di kelas tersebut selesai, sistem akan memicu penerbitan sertifikat secara otomatis.
 2.  **Sertifikat PDF & Verifikasi Kode**:
     *   Task Celery `generate_certificate` akan merender sertifikat PDF secara biner melalui modul kustom tanpa library luar yang berat (sangat cepat dan ringan).
     *   Tersedia endpoint publik `/api/enrollments/certificates/verify/{code}` untuk memverifikasi keabsahan sertifikat secara umum tanpa login.
@@ -91,7 +92,10 @@ graph TD
     *   Seluruh aktivitas sensitif (enroll, login, submit quiz, complete lesson) dicatat sebagai dokumen BSON di MongoDB secara non-blocking.
     *   MongoDB Aggregation Framework digunakan untuk merangkum riwayat aktivitas per user dan menghitung statistik popularitas kelas.
 5.  **Celery Asynchronous Tasks**:
-    *   Semua email konfirmasi dan proses ekspor CSV dikirim ke antrean RabbitMQ untuk diproses oleh Celery workers secara terpisah agar respon API instan.
+    *   Semua task berat seperti pengiriman email konfirmasi, pembuatan sertifikat, dan ekspor file CSV dikirim ke antrean RabbitMQ untuk diproses oleh Celery workers secara *asynchronous* agar respons API instan.
+    *   **Celery Beat** dikonfigurasi untuk menjalankan tugas berkala (Cron Job) yang memperbarui statistik harian kursus setiap jam 02:00 pagi.
+    *   Sistem menyediakan endpoint status task (`/api/courses/tasks/{task_id}/status`) untuk melakukan *polling* status *background task*.
+    *   Semua antrean pesan dipantau secara real-time lewat UI **Flower** di port 5555.
 
 ---
 
@@ -152,15 +156,12 @@ Berikut adalah panduan peletakan gambar/screenshot bukti pengujian fungsionalita
 
 #### 1. Swagger UI REST API Documentation
 Diambil dari akses ke alamat: `http://localhost:8000/api/docs`
-```text
-[TEMPAT SCREENSHOT: Tampilan halaman utama dokumentasi API Swagger UI Anda]
-```
+![alt text](image-2.png)
 
-#### 2. Tampilan UI/Frontend Sederhana (Bonus +5)
+#### 2. Tampilan UI/Frontend Sederhana
 Diambil dari akses ke alamat root utama: `http://localhost:8000/`
-```text
-[TEMPAT SCREENSHOT: Dashboard interaktif web frontend Anda saat proses belajar, mengerjakan kuis, atau setelah sertifikat terbit]
-```
+![alt text](image.png)
+![alt text](image-1.png)
 
 
 #### 3. Uji Coba Caching & Rate Limiting (Redis)
