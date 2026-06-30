@@ -7,7 +7,6 @@
 *   **Nama**: Gibran Rais Hilmy Iskandar
 *   **NIM**: A11.2023.15270
 *   **Kelas**: Pemrograman Sisi Server (A11.4618)
-*   **URL Repository**: [Isi URL Repository Git Anda]
 
 ---
 

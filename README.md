@@ -153,5 +153,5 @@ Setelah menjalankan `seed_data`, Anda dapat menguji API menggunakan akun demo be
 | Role | Username | Password | Deskripsi / Otoritas |
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin` | `password123` | Mengelola seluruh resource, melihat log aktivitas analitik MongoDB. |
-| **Instructor** | `dosen01` | `password123` | Membuat kursus, mengelola materi (lesson), dan membuat kuis. |
+| **Instructor** | `dosen10` | `password123` | Membuat kursus, mengelola materi (lesson), dan membuat kuis. |
 | **Student** | `mhs001` | `password123` | Melakukan pendaftaran (enroll), membaca materi, dan menjawab kuis. |
