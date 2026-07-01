@@ -69,7 +69,7 @@ graph TD
     Web -->|5. Antrean Tugas| RabbitMQ[RabbitMQ Broker]
     RabbitMQ --> Celery[Celery Background Worker]
     Celery -->|6. Render & Simpan Sertifikat| Media[Media Storage]
-    Celery Beat[Celery Beat Scheduler] -->|Periodic Task 02:00| RabbitMQ
+    CeleryBeat[Celery Beat Scheduler] -->|Periodic Task 02:00| RabbitMQ
     Flower[Flower Dashboard] -->|Monitoring Antrean| RabbitMQ
 ```
 
